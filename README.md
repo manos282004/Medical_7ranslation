@@ -218,3 +218,13 @@ Add screenshots in submission package:
 ### Submission Readiness
 
 This project now matches assignment goals with production-like structure, clear separation of concerns, polished UX, environment safety, and professional documentation.
+
+## FFmpeg Setup (Deployment)
+
+This repository does **not** bundle FFmpeg binaries, so it stays GitHub-safe and lightweight.
+
+- Current OpenAI-based pipeline does not require local FFmpeg for server-side transcription.
+- If your environment needs audio preprocessing in the future, install FFmpeg at system level:
+  - Windows: `choco install ffmpeg -y` (Admin shell)
+  - Linux (Render/Ubuntu): `apt-get update && apt-get install -y ffmpeg`
+  - macOS: `brew install ffmpeg`

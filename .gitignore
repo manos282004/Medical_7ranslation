@@ -5,3 +5,6 @@ dist/
 __pycache__/
 .tmp_pip/
 *.pyc
+tools/
+*.zip
+*.exe
