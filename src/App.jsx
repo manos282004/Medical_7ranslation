@@ -47,7 +47,12 @@ function App() {
 
     try {
       const response = await uploadAudioFile(file, { mode, language: language.trim() });
-      setTranscript(response.translated_transcript || response.original_transcript || 'No transcript returned.');
+      setTranscript(
+        response.patient_transcript ||
+        response.translated_transcript ||
+        response.original_transcript ||
+        'No transcript returned.'
+      );
       setSummary(response.summary || 'No summary returned.');
       setToast({ type: 'success', message: 'Transcription completed successfully.' });
     } catch (uploadError) {

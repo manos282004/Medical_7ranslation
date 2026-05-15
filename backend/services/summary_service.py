@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 def summarize_text(text: str) -> str:
-    """Summarize translated transcript using OpenAI gpt-4.1-mini."""
+    """Summarize patient-focused transcript using OpenAI gpt-4.1-mini."""
     normalized = (text or "").strip()
     if not normalized:
         return "No transcription available to summarize."
@@ -20,9 +20,12 @@ def summarize_text(text: str) -> str:
             {
                 "role": "system",
                 "content": (
-                    "You are a medical scribe assistant. Create a concise, clinically useful summary in plain English. "
-                    "Use 3 sections exactly: Chief complaint, Clinical notes, Plan. "
-                    "Do not invent facts. Keep it brief and clear."
+                    "You are an AI symptom intake assistant. "
+                    "Create a concise, clinically useful summary in plain English using ONLY patient-reported content. "
+                    "Use exactly these 3 sections in order and labels: "
+                    "Chief Complaint, Clinical Notes, Recommendation. "
+                    "In Clinical Notes include: symptoms, duration/timeline, severity, and medications if present. "
+                    "Do not include doctor speech. Do not invent facts. Keep it concise."
                 ),
             },
             {"role": "user", "content": normalized},

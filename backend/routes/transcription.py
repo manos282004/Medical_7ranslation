@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from backend.services.transcription_service import transcribe_audio
 from backend.services.translation_service import translate_text
+from backend.services.patient_content_service import extract_patient_content
 from backend.services.summary_service import summarize_text
 from backend.utils.file_handler import save_upload_file_tmp, remove_file
 import logging
@@ -55,8 +56,12 @@ async def transcribe_endpoint(
         )
         logger.info("translation completed")
 
+        logger.info("patient-content extraction started")
+        patient_transcript = extract_patient_content(translated_transcript)
+        logger.info("patient-content extraction completed")
+
         logger.info("summary started")
-        summary = summarize_text(translated_transcript)
+        summary = summarize_text(patient_transcript)
         logger.info("summary completed")
 
         return JSONResponse(
@@ -64,6 +69,7 @@ async def transcribe_endpoint(
             content={
                 "original_transcript": original_transcript,
                 "translated_transcript": translated_transcript,
+                "patient_transcript": patient_transcript,
                 "summary": summary,
             },
         )
