@@ -10,6 +10,29 @@ def _normalize_whitespace(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "")).strip()
 
 
+def strip_speaker_labels(text: str) -> str:
+    """Remove common speaker prefixes from multilingual transcripts."""
+    if not text:
+        return ""
+
+    cleaned = text
+
+    patterns = [
+        r"\bdoctor\s*[:\-]\s*",
+        r"\bpatient\s*[:\-]\s*",
+        r"\bspeaker\s*\d+\s*[:\-]\s*",
+        r"\bspeaker\s*one\s*[:\-]\s*",
+        r"\bspeaker\s*two\s*[:\-]\s*",
+        r"மருத்துவர்\s*[:\-]\s*",
+        r"நோயாளர்\s*[:\-]\s*",
+    ]
+
+    for pattern in patterns:
+        cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE)
+
+    return _normalize_whitespace(cleaned)
+
+
 def _fallback_patient_content(text: str) -> str:
     """Fallback filter when speaker separation is uncertain."""
     normalized = _normalize_whitespace(text)
@@ -35,8 +58,8 @@ def _fallback_patient_content(text: str) -> str:
             picked.append(line)
 
     if not picked:
-        return normalized
-    return " ".join(picked)
+        return strip_speaker_labels(normalized)
+    return strip_speaker_labels(" ".join(picked))
 
 
 def extract_patient_content(text: str) -> str:
@@ -67,7 +90,7 @@ def extract_patient_content(text: str) -> str:
                 },
             ],
         )
-        extracted = _normalize_whitespace(response.output_text)
+        extracted = strip_speaker_labels(response.output_text)
         if extracted:
             logger.info("patient-content extraction produced %s characters", len(extracted))
             return extracted
